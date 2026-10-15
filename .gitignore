@@ -5,3 +5,7 @@ epg/
 _site/
 guide.xml
 .venv/
+tvos/TvGids.xcodeproj/
+tvos/TvGids/Info.plist
+xcuserdata/
+DerivedData/

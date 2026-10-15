@@ -1,0 +1,72 @@
+{
+ "hashes": [
+  {
+   "title": "Nieuws",
+   "fnv1a32": 102983184,
+   "index": 4
+  },
+  {
+   "title": "Voorbeeldjournaal",
+   "fnv1a32": 3551309909,
+   "index": 4
+  },
+  {
+   "title": "Familie",
+   "fnv1a32": 2272757044,
+   "index": 4
+  },
+  {
+   "title": "Thuis",
+   "fnv1a32": 2733341412,
+   "index": 2
+  },
+  {
+   "title": "De Slimste Mens",
+   "fnv1a32": 2304467624,
+   "index": 4
+  },
+  {
+   "title": "Café Corsari",
+   "fnv1a32": 3370294216,
+   "index": 1
+  },
+  {
+   "title": "Één tegen allen",
+   "fnv1a32": 1129883050,
+   "index": 0
+  },
+  {
+   "title": "Gert Late Night",
+   "fnv1a32": 2891294051,
+   "index": 1
+  },
+  {
+   "title": "",
+   "fnv1a32": 2166136261,
+   "index": 1
+  },
+  {
+   "title": "A",
+   "fnv1a32": 3289118412,
+   "index": 2
+  }
+ ],
+ "sequence": {
+  "titles": [
+   "Nieuws",
+   "Nieuws",
+   "Thuis",
+   "Thuis",
+   "Familie",
+   "A"
+  ],
+  "indices": [
+   4,
+   0,
+   2,
+   3,
+   4,
+   2
+  ]
+ }
+}

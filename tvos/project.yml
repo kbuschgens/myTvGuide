@@ -1,0 +1,54 @@
+name: TvGids
+options:
+  bundleIdPrefix: nl.nieuwestroom
+  deploymentTarget:
+    tvOS: "18.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+targets:
+  TvGids:
+    type: application
+    platform: tvOS
+    sources:
+      - TvGids
+      - path: ../pipeline/channels.json
+        buildPhase: resources
+      - path: ../shared/palette.json
+        buildPhase: resources
+      - path: ../docs/logos
+        type: folder
+        buildPhase: resources
+    info:
+      path: TvGids/Info.plist
+      properties:
+        CFBundleDisplayName: TV Gids
+        UILaunchScreen: {}
+        LSApplicationQueriesSchemes: [vtmgo, goplay-app, vrtmax]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: nl.nieuwestroom.tvgids
+        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+  TvGidsTests:
+    type: bundle.unit-test
+    platform: tvOS
+    sources:
+      - TvGidsTests
+      - path: ../shared/palette-vectors.json
+        buildPhase: resources
+      - path: ../docs/sample.json
+        buildPhase: resources
+    dependencies:
+      - target: TvGids
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: nl.nieuwestroom.tvgids.tests
+schemes:
+  TvGids:
+    build:
+      targets:
+        TvGids: all
+    test:
+      targets: [TvGidsTests]

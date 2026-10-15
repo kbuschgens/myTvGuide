@@ -23,3 +23,11 @@ python3 pipeline/convert.py guide.xml pipeline/channels.json guide.json
 De workflow `.github/workflows/sync-epg.yml` draait dagelijks om 03:00 UTC en publiceert `guide.json`, `schema.json` en `logos/` naar GitHub Pages. Bij een mislukte grab of lege zender faalt de workflow en blijft de vorige publicatie staan.
 
 **Eenmalig:** GitHub repo → Settings → Pages → Source: *GitHub Actions*.
+
+## tvOS
+```
+cd tvos && xcodegen generate     # genereert TvGids.xcodeproj uit project.yml
+open TvGids.xcodeproj
+xcodebuild -project TvGids.xcodeproj -scheme TvGids -destination 'platform=tvOS Simulator,name=Apple TV' test
+```
+`channels.json` en `palette.json` worden direct uit `pipeline/` en `shared/` in de app gebundeld.
