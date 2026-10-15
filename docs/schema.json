@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TV Gids",
+  "type": "object",
+  "required": ["version", "generatedAt", "channels"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "const": 1 },
+    "generatedAt": { "type": "string", "format": "date-time", "description": "UTC ISO-8601; gebruikt door clients voor cache-vergelijking" },
+    "channels": {
+      "type": "array",
+      "description": "Volgorde = weergavevolgorde; eerste zender (VTM) krijgt initiële focus",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "logo", "app", "scheme", "programs"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "logo": { "type": "string", "description": "Relatief pad t.o.v. de JSON, bv. logos/vtm-be.png" },
+          "app": { "enum": ["vtmgo", "goplay", "vrtmax"] },
+          "scheme": { "type": "string", "pattern": "^[a-z-]+://$" },
+          "programs": {
+            "type": "array",
+            "description": "Gesorteerd op start, zonder overlap",
+            "items": {
+              "type": "object",
+              "required": ["start", "end", "title"],
+              "additionalProperties": false,
+              "properties": {
+                "start": { "type": "string", "format": "date-time" },
+                "end": { "type": "string", "format": "date-time" },
+                "title": { "type": "string", "minLength": 1 },
+                "description": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

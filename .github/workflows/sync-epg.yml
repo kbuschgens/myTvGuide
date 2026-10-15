@@ -1,0 +1,89 @@
+name: Sync EPG
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+    inputs:
+      epg_ref:
+        description: "iptv-org/epg commit/tag/branch (pin voor reproduceerbaarheid)"
+        default: master
+  push:
+    branches: [main]
+    paths: ["pipeline/**", ".github/workflows/sync-epg.yml"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Tests converter
+        run: |
+          pip install jsonschema
+          python -m unittest discover -s pipeline/tests -v
+
+      - uses: actions/checkout@v4
+        with:
+          repository: iptv-org/epg
+          ref: ${{ inputs.epg_ref || 'master' }}
+          path: epg
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: epg/package-lock.json
+
+      - name: Grab telenet.tv (alleen onze 11 zenders)
+        run: |
+          python pipeline/make_channels_xml.py pipeline/channels.json epg/custom.channels.xml
+          cd epg
+          npm ci
+          npm run grab --- --channels=custom.channels.xml --days=7 --output=guide.xml
+          test -s guide.xml
+
+      - name: Converteer naar JSON
+        run: |
+          mkdir -p _site
+          python pipeline/convert.py epg/guide.xml pipeline/channels.json _site/guide.json
+          cp -r docs/logos _site/logos
+          cp docs/schema.json _site/schema.json
+
+      - name: Valideer output tegen schema
+        run: |
+          python - <<'PY'
+          import json, jsonschema
+          doc = json.load(open("_site/guide.json"))
+          jsonschema.validate(doc, json.load(open("_site/schema.json")))
+          assert len(doc["channels"]) == 11, "verwacht 11 zenders"
+          print("guide.json valide")
+          PY
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

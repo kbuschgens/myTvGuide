@@ -1,0 +1,14 @@
+{
+  "palette": [
+    { "name": "Soft Blue",     "past": "#B9D9F3", "future": "#D0E2EF" },
+    { "name": "Soft Lavender", "past": "#B3B1E8", "future": "#CFCEEC" },
+    { "name": "Soft Peach",    "past": "#F3D3C6", "future": "#F0DED7" },
+    { "name": "Soft Coral",    "past": "#FAB9AC", "future": "#F7D3CC" },
+    { "name": "Soft Sage",     "past": "#B4D7C8", "future": "#CDE1D9" }
+  ],
+  "assignment": {
+    "hash": "FNV-1a 32-bit over UTF-8 bytes van de programmatitel",
+    "index": "hash % 5",
+    "adjacency": "Als index gelijk is aan die van het vorige programma op dezelfde zender: (index + 1) % 5"
+  }
+}

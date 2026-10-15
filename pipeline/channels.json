@@ -1,0 +1,30 @@
+{
+  "channels": [
+    {"id": "vtm", "name": "VTM", "sourceId": "VTM.be", "siteId": "vtmhd", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm-be.png"},
+    {"id": "vtm2", "name": "VTM 2", "sourceId": "VTM2.be", "siteId": "2behd", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm2-be.png"},
+    {"id": "vtm3", "name": "VTM 3", "sourceId": "VTM3.be", "siteId": "vitaya", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm3-be.png"},
+    {"id": "vtm4", "name": "VTM 4", "sourceId": "VTM4.be", "siteId": "acht", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm4-be.png"},
+    {"id": "vtmgold", "name": "VTM Gold", "sourceId": "VTMGold.be", "siteId": "caz2", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm-gold-be.png"},
+    {"id": "play4", "name": "Play4", "sourceId": "Play4.be", "siteId": "vierhd", "app": "goplay", "scheme": "goplay-app://", "logoFile": "play-be.png"},
+    {"id": "play5", "name": "Play5", "sourceId": "Play5.be", "siteId": "vijfhd", "app": "goplay", "scheme": "goplay-app://", "logoFile": "play-be.png"},
+    {"id": "play6", "name": "Play6", "sourceId": "Play6.be", "siteId": "zes", "app": "goplay", "scheme": "goplay-app://", "logoFile": "play-be.png"},
+    {"id": "play7", "name": "Play7", "sourceId": "Play7.be", "siteId": "zeven", "app": "goplay", "scheme": "goplay-app://", "logoFile": "play-be.png"},
+    {"id": "vrt1", "name": "VRT 1", "sourceId": "VRT1.be", "siteId": "eenhd", "app": "vrtmax", "scheme": "vrtmax://", "logoFile": "vrt-1-be.png"},
+    {"id": "vrtcanvas", "name": "VRT Canvas", "sourceId": "VRTCanvas.be", "siteId": "ketnetcanvashd", "app": "vrtmax", "scheme": "vrtmax://", "logoFile": "vrt-canvas-be.png"}
+  ],
+  "apps": {
+    "vtmgo": {
+      "name": "VTM GO",
+      "scheme": "vtmgo://"
+    },
+    "goplay": {
+      "name": "GoPlay / Play",
+      "scheme": "goplay-app://"
+    },
+    "vrtmax": {
+      "name": "VRT MAX",
+      "scheme": "vrtmax://"
+    }
+  },
+  "logoBaseUrl": "https://raw.githubusercontent.com/Tapiosinn/tv-logos-1/main/countries/belgium/"
+}
