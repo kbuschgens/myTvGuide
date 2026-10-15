@@ -1,16 +1,16 @@
 {
   "channels": [
-    {"id": "vtm", "name": "VTM", "sourceId": "VTM.be", "siteId": "vtmhd", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm-be.png"},
-    {"id": "vtm2", "name": "VTM 2", "sourceId": "VTM2.be", "siteId": "2behd", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm2-be.png"},
-    {"id": "vtm3", "name": "VTM 3", "sourceId": "VTM3.be", "siteId": "vitaya", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm3-be.png"},
-    {"id": "vtm4", "name": "VTM 4", "sourceId": "VTM4.be", "siteId": "acht", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm4-be.png"},
-    {"id": "vtmgold", "name": "VTM Gold", "sourceId": "VTMGold.be", "siteId": "caz2", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm-gold-be.png"},
-    {"id": "play4", "name": "Play4", "sourceId": "Play4.be", "siteId": "vierhd", "app": "goplay", "scheme": "goplay-app://", "logoFile": "play-be.png"},
-    {"id": "play5", "name": "Play5", "sourceId": "Play5.be", "siteId": "vijfhd", "app": "goplay", "scheme": "goplay-app://", "logoFile": "play-fictie-be.png"},
-    {"id": "play6", "name": "Play6", "sourceId": "Play6.be", "siteId": "zes", "app": "goplay", "scheme": "goplay-app://", "logoFile": "play-actie-be.png"},
-    {"id": "play7", "name": "Play7", "sourceId": "Play7.be", "siteId": "zeven", "app": "goplay", "scheme": "goplay-app://", "logoFile": "play-reality-be.png"},
-    {"id": "vrt1", "name": "VRT 1", "sourceId": "VRT1.be", "siteId": "eenhd", "app": "vrtmax", "scheme": "vrtmax://", "logoFile": "vrt-1-be.png"},
-    {"id": "vrtcanvas", "name": "VRT Canvas", "sourceId": "VRTCanvas.be", "siteId": "ketnetcanvashd", "app": "vrtmax", "scheme": "vrtmax://", "logoFile": "vrt-canvas-be.png"}
+    {"id": "vtm", "name": "VTM", "sourceId": "VTM.be", "siteId": "vtmhd", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm-be.png", "openUrl": "vtmgo://www.vtmgo.be/vtmgo/live-kijken/vtm"},
+    {"id": "vtm2", "name": "VTM 2", "sourceId": "VTM2.be", "siteId": "2behd", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm2-be.png", "openUrl": "vtmgo://www.vtmgo.be/vtmgo/live-kijken/vtm2"},
+    {"id": "vtm3", "name": "VTM 3", "sourceId": "VTM3.be", "siteId": "vitaya", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm3-be.png", "openUrl": "vtmgo://www.vtmgo.be/vtmgo/live-kijken/vtm3"},
+    {"id": "vtm4", "name": "VTM 4", "sourceId": "VTM4.be", "siteId": "acht", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm4-be.png", "openUrl": "vtmgo://www.vtmgo.be/vtmgo/live-kijken/vtm4"},
+    {"id": "vtmgold", "name": "VTM Gold", "sourceId": "VTMGold.be", "siteId": "caz2", "app": "vtmgo", "scheme": "vtmgo://", "logoFile": "vtm-gold-be.png", "openUrl": "vtmgo://www.vtmgo.be/vtmgo/live-kijken/vtm-gold"},
+    {"id": "play4", "name": "Play4", "sourceId": "Play4.be", "siteId": "vierhd", "app": "goplay", "scheme": "goplay-app://", "logoFile": "play-be.png", "openUrl": "https://www.play.tv/live-kijken/play"},
+    {"id": "play5", "name": "Play5", "sourceId": "Play5.be", "siteId": "vijfhd", "app": "goplay", "scheme": "goplay-app://", "logoFile": "play-fictie-be.png", "openUrl": "https://www.play.tv/live-kijken/play-fictie"},
+    {"id": "play6", "name": "Play6", "sourceId": "Play6.be", "siteId": "zes", "app": "goplay", "scheme": "goplay-app://", "logoFile": "play-actie-be.png", "openUrl": "https://www.play.tv/live-kijken/play-actie"},
+    {"id": "play7", "name": "Play7", "sourceId": "Play7.be", "siteId": "zeven", "app": "goplay", "scheme": "goplay-app://", "logoFile": "play-reality-be.png", "openUrl": "https://www.play.tv/live-kijken/play-reality"},
+    {"id": "vrt1", "name": "VRT 1", "sourceId": "VRT1.be", "siteId": "eenhd", "app": "vrtmax", "scheme": "vrtmax://", "logoFile": "vrt-1-be.png", "openUrl": "vrtmax://"},
+    {"id": "vrtcanvas", "name": "VRT Canvas", "sourceId": "VRTCanvas.be", "siteId": "ketnetcanvashd", "app": "vrtmax", "scheme": "vrtmax://", "logoFile": "vrt-canvas-be.png", "openUrl": "vrtmax://"}
   ],
   "apps": {
     "vtmgo": {

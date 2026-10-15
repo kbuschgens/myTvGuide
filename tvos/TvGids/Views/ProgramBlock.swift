@@ -22,12 +22,18 @@ struct ProgramBlock: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background(background)
         .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay {
-            RoundedRectangle(cornerRadius: 10)
-                .strokeBorder(.white, lineWidth: isFocused ? 5 : 0)
-        }
-        .scaleEffect(isFocused ? 1.03 : 1)
+        .shadow(color: .black.opacity(isFocused ? 0.6 : 0), radius: 14, y: 6)
+        .overlay { if isFocused { focusRing } }
+        .scaleEffect(isFocused ? 1.04 : 1)
         .animation(.easeOut(duration: 0.15), value: isFocused)
+    }
+
+    /// Dubbele rand (wit + donker erbinnen): zichtbaar op zowel de lichte blokken als de donkere achtergrond.
+    private var focusRing: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10).strokeBorder(.white, lineWidth: 7)
+            RoundedRectangle(cornerRadius: 4).strokeBorder(Color(hex: "#1B1B1F"), lineWidth: 3).padding(7)
+        }
     }
 
     /// Verleden = basiskleur, toekomst = lichtere kleur; een lopend programma wordt op de Nu-lijn gesplitst.

@@ -11,18 +11,31 @@ struct AppInfo: Decodable, Sendable, Equatable {
 
 /// Zender → doel-app, uit pipeline/channels.json (gebundeld).
 struct AppLinks: Sendable {
-    private struct File: Decodable { let apps: [String: AppInfo] }
+    private struct File: Decodable {
+        struct Entry: Decodable { let id: String; let openUrl: String? }
+        let apps: [String: AppInfo]
+        let channels: [Entry]
+    }
     let apps: [String: AppInfo]
+    /// Zenders met een eigen link (`openUrl`) die voorrang heeft op het app-scheme.
+    let channelURLs: [String: URL]
 
-    init(apps: [String: AppInfo]) { self.apps = apps }
+    init(apps: [String: AppInfo], channelURLs: [String: URL] = [:]) {
+        self.apps = apps
+        self.channelURLs = channelURLs
+    }
 
     init(bundle: Bundle = .main) {
         guard let url = bundle.url(forResource: "channels", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let file = try? JSONDecoder().decode(File.self, from: data)
         else { self.init(apps: [:]); return }
-        self.init(apps: file.apps)
+        let urls = file.channels.compactMap { entry in
+            entry.openUrl.flatMap(URL.init(string:)).map { (entry.id, $0) }
+        }
+        self.init(apps: file.apps, channelURLs: Dictionary(urls, uniquingKeysWith: { first, _ in first }))
     }
 
     func app(for channel: Channel) -> AppInfo? { apps[channel.app] }
+    func overrideURL(for channel: Channel) -> URL? { channelURLs[channel.id] }
 }

@@ -37,7 +37,7 @@ struct EPGGrid: View {
             HStack(spacing: 0) {
                 Color.clear.frame(width: channelColumnWidth, height: headerHeight)
                 ScrollView(.horizontal, showsIndicators: false) {
-                    TimeHeader(grid: grid, now: now).frame(height: headerHeight)
+                    TimeHeader(grid: grid).frame(height: headerHeight)
                 }
                 .scrollDisabled(true)
                 .scrollPosition($headerPosition)
@@ -64,30 +64,23 @@ struct EPGGrid: View {
     }
 
     private func rows(grid: TimeGrid) -> some View {
-        ZStack(alignment: .topLeading) {
-            VStack(spacing: rowSpacing) {
-                ForEach(guide.channels) { channel in
-                    let colors = ColorAssigner.indices(for: channel.programs.map(\.title), paletteCount: palette.count)
-                    TimelineRowLayout(totalWidth: grid.totalWidth, height: rowHeight) {
-                        ForEach(Array(channel.programs.enumerated()), id: \.element.id) { i, program in
-                            if let f = grid.frame(start: program.start, end: program.end) {
-                                let target = FocusTarget(channelID: channel.id, start: program.start)
-                                Button { onSelect(channel, program) } label: {
-                                    ProgramBlock(program: program, pair: palette[colors[i]], now: now)
-                                }
-                                .buttonStyle(BlockButtonStyle())
-                                .focused($focused, equals: target)
-                                .timelineSlot(x: f.x, width: max(f.width - 4, 1))
+        VStack(spacing: rowSpacing) {
+            ForEach(guide.channels) { channel in
+                let colors = ColorAssigner.indices(for: channel.programs.map(\.title), paletteCount: palette.count)
+                TimelineRowLayout(totalWidth: grid.totalWidth, height: rowHeight) {
+                    ForEach(Array(channel.programs.enumerated()), id: \.element.id) { i, program in
+                        if let f = grid.frame(start: program.start, end: program.end) {
+                            let target = FocusTarget(channelID: channel.id, start: program.start)
+                            Button { onSelect(channel, program) } label: {
+                                ProgramBlock(program: program, pair: palette[colors[i]], now: now)
                             }
+                            .buttonStyle(BlockButtonStyle())
+                            .focused($focused, equals: target)
+                            .timelineSlot(x: f.x, width: max(f.width - 4, 1))
                         }
                     }
                 }
             }
-            Rectangle()
-                .fill(Color(hex: "#FF4D4D"))
-                .frame(width: 3)
-                .offset(x: grid.x(for: now) - 1.5)
-                .allowsHitTesting(false)
         }
         .focusSection()
     }
@@ -108,7 +101,6 @@ struct EPGGrid: View {
 
 private struct TimeHeader: View {
     let grid: TimeGrid
-    let now: Date
 
     var body: some View {
         HStack(spacing: 0) {
@@ -124,10 +116,6 @@ private struct TimeHeader: View {
             }
         }
         .frame(width: grid.totalWidth, alignment: .leading)
-        .overlay(alignment: .topLeading) {
-            Circle().fill(Color(hex: "#FF4D4D")).frame(width: 12, height: 12)
-                .offset(x: grid.x(for: now) - 6, y: 38)
-        }
     }
 }
 

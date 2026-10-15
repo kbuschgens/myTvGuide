@@ -7,6 +7,7 @@ struct GuideScreen: View {
     @State private var missingApp: AppInfo?
     @State private var anchor = TimeGrid.floorToSlot(.now)
     @State private var gridID = UUID()
+    @State private var isReady = false
 
     @Environment(\.scenePhase) private var scenePhase
     private let palette = Palette.load()
@@ -16,12 +17,29 @@ struct GuideScreen: View {
         GeometryReader { geo in
             VStack(spacing: 0) {
                 if let guide = store.guide {
-                    TimelineView(.periodic(from: .now, by: 15)) { context in
-                        EPGGrid(guide: guide, logoURL: store.logoURL(for:), palette: palette, anchor: anchor,
-                                now: context.date, viewportWidth: geo.size.width, focus: $focus, onSelect: open)
+                    // Het raster wordt direct opgebouwd (zodat scroll en focus kunnen landen) maar blijft
+                    // afgedekt door een spinner tot de initiële focus en het detailvenster klaar zijn.
+                    ZStack {
+                        VStack(spacing: 0) {
+                            TimelineView(.periodic(from: .now, by: 15)) { context in
+                                EPGGrid(guide: guide, logoURL: store.logoURL(for:), palette: palette, anchor: anchor,
+                                        now: context.date, viewportWidth: geo.size.width, focus: $focus, onSelect: open)
+                            }
+                            .id(gridID)
+                            DetailPane(channel: selection?.channel, program: selection?.program)
+                        }
+                        if !isReady {
+                            // Dekkende laag i.p.v. opacity 0: verborgen views kunnen geen focus krijgen.
+                            Rectangle().fill(.background).ignoresSafeArea()
+                            ProgressView().scaleEffect(1.6)
+                        }
                     }
-                    .id(gridID)
-                    DetailPane(channel: selection?.channel, program: selection?.program)
+                    .onChange(of: selection != nil) { _, hasSelection in if hasSelection { isReady = true } }
+                    .task(id: gridID) {
+                        // Vangnet: toon de gids ook als er geen programma gefocust kan worden.
+                        try? await Task.sleep(for: .seconds(2))
+                        isReady = true
+                    }
                 } else if let message = store.errorMessage {
                     Text(message).font(.title3).frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -35,6 +53,7 @@ struct GuideScreen: View {
             // Bij ontwaken: raster opnieuw verankeren op de huidige tijd (scroll en focus terug naar live).
             anchor = TimeGrid.floorToSlot(.now)
             gridID = UUID()
+            isReady = false
             Task { await store.refresh() }
         }
         .alert(item: $missingApp) { app in
@@ -54,6 +73,12 @@ struct GuideScreen: View {
     }
 
     private func open(_ channel: Channel, _ program: Program) {
+        if let url = links.overrideURL(for: channel) {
+            UIApplication.shared.open(url) { success in
+                print("opened:", success)
+            }
+            return
+        }
         guard let app = links.app(for: channel), let url = app.launchURL else { return }
         UIApplication.shared.open(url, options: [:]) { success in
             if !success { Task { @MainActor in missingApp = app } }
