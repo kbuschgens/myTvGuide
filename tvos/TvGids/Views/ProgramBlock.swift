@@ -15,9 +15,10 @@ struct ProgramBlock: View {
             Text(BrusselsTime.range(program.start, program.end))
                 .font(.caption2)
                 .lineLimit(1)
-                .opacity(0.7)
+                .opacity(0.85)
         }
-        .foregroundStyle(Color(hex: "#1B1B1F"))
+        .foregroundStyle(.white)
+        .shadow(color: .black.opacity(0.35), radius: 2, y: 1)
         .padding(.horizontal, 14)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background(background)

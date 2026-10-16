@@ -22,5 +22,12 @@ struct DetailPane: View {
         }
         .frame(maxWidth: .infinity, minHeight: 190, maxHeight: 190, alignment: .topLeading)
         .padding(.top, 20)
+        .overlay(alignment: .top) {
+            // Dunne, lichtere scheidingslijn over de volle breedte: maakt het detailvenster een aparte sectie.
+            Rectangle()
+                .fill(.white.opacity(0.3))
+                .frame(height: 1)
+                .ignoresSafeArea(edges: .horizontal)
+        }
     }
 }

@@ -77,9 +77,13 @@ struct EPGGrid: View {
                             .buttonStyle(BlockButtonStyle())
                             .focused($focused, equals: target)
                             .timelineSlot(x: f.x, width: max(f.width - 4, 1))
+                            // Gefocust blok boven zijn buren, anders tekent de volgende het van links naar rechts over de rand.
+                            .zIndex(focused == target ? 1 : 0)
                         }
                     }
                 }
+                // Idem tussen rijen: de rij met focus boven de rij eronder (schaal + schaduw lopen eroverheen).
+                .zIndex(focused?.channelID == channel.id ? 1 : 0)
             }
         }
         .focusSection()

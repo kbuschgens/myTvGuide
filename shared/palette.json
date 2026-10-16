@@ -1,10 +1,10 @@
 {
   "palette": [
-    { "name": "Soft Blue",     "past": "#B9D9F3", "future": "#D0E2EF" },
-    { "name": "Soft Lavender", "past": "#B3B1E8", "future": "#CFCEEC" },
-    { "name": "Soft Peach",    "past": "#F3D3C6", "future": "#F0DED7" },
-    { "name": "Soft Coral",    "past": "#FAB9AC", "future": "#F7D3CC" },
-    { "name": "Soft Sage",     "past": "#B4D7C8", "future": "#CDE1D9" }
+    { "name": "Soft Blue",     "past": "#2a4f67", "future": "#253946" },
+    { "name": "Soft Lavender", "past": "#68291c", "future": "#47241d" },
+    { "name": "Soft Peach",    "past": "#4a5622", "future": "#363c21" },
+    { "name": "Soft Coral",    "past": "#611d35", "future": "#431e2a" },
+    { "name": "Soft Sage",     "past": "#264b3d", "future": "#23372f" }
   ],
   "assignment": {
     "hash": "FNV-1a 32-bit over UTF-8 bytes van de programmatitel",

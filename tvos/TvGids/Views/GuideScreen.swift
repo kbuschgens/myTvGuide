@@ -8,10 +8,13 @@ struct GuideScreen: View {
     @State private var anchor = TimeGrid.floorToSlot(.now)
     @State private var gridID = UUID()
     @State private var isReady = false
+    @State private var backgroundedAt: Date?
 
     @Environment(\.scenePhase) private var scenePhase
     private let palette = Palette.load()
     private let links = AppLinks()
+    /// Na zo lang op de achtergrond start de gids opnieuw bij het live-programma.
+    private static let reanchorAfter: TimeInterval = 10 * 60
 
     var body: some View {
         GeometryReader { geo in
@@ -49,12 +52,26 @@ struct GuideScreen: View {
         }
         .task { await store.refresh() }
         .onChange(of: scenePhase) { _, phase in
-            guard phase == .active else { return }
-            // Bij ontwaken: raster opnieuw verankeren op de huidige tijd (scroll en focus terug naar live).
-            anchor = TimeGrid.floorToSlot(.now)
-            gridID = UUID()
-            isReady = false
-            Task { await store.refresh() }
+            switch phase {
+            case .background:
+                // Afdekken zodra de app weggaat: bij terugkeer zie je dan nooit een verouderd raster.
+                backgroundedAt = .now
+                isReady = false
+            case .active:
+                Task { await store.refresh() }
+                guard let since = backgroundedAt else { return }
+                backgroundedAt = nil
+                if Date.now.timeIntervalSince(since) > Self.reanchorAfter {
+                    // Lang weggeweest: raster opnieuw verankeren op nu; scroll en focus terug naar live.
+                    anchor = TimeGrid.floorToSlot(.now)
+                    focus = nil
+                    gridID = UUID()
+                } else {
+                    isReady = true // Kort weggeweest: raster, scroll en focus blijven zoals ze waren.
+                }
+            default:
+                break
+            }
         }
         .alert(item: $missingApp) { app in
             Alert(title: Text("\(app.name) niet gevonden"),
