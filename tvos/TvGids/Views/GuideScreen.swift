@@ -7,6 +7,7 @@ struct GuideScreen: View {
     @State private var missingApp: AppInfo?
     @State private var probing: Channel?
     @State private var probeResult: String?
+    @State private var found = PrivateLauncher.Report()
     @State private var anchor = TimeGrid.floorToSlot(.now)
     @State private var gridID = UUID()
     @State private var isReady = false
@@ -77,12 +78,26 @@ struct GuideScreen: View {
         }
         .confirmationDialog("Test VRT MAX-link", isPresented: Binding(get: { probing != nil }, set: { if !$0 { probing = nil } }),
                             titleVisibility: .visible) {
+            Button("Zoek VRT op dit toestel") {
+                found = PrivateLauncher.search("vrt")
+                probeResult = found.lines.joined(separator: "\n")
+            }
+            ForEach(found.schemes, id: \.self) { scheme in
+                if let url = URL(string: "\(scheme)://") {
+                    Button("Gevonden: \(scheme)://") { probe(url) }
+                }
+            }
+            ForEach(found.bundleIDs.isEmpty ? ["be.vrt.vrtnu", "be.vrt.vrtmax"] : found.bundleIDs, id: \.self) { id in
+                Button("Open app \(id)") {
+                    probeResult = "openApplicationWithBundleID \(id): \(PrivateLauncher.open(bundleID: id))"
+                }
+            }
             ForEach(probing.flatMap { links.probeURLs[$0.id] } ?? [], id: \.absoluteString) { url in
                 Button(url.absoluteString) { probe(url) }
             }
             Button("Annuleer", role: .cancel) {}
         } message: {
-            Text("Kies een link en kijk of VRT MAX opent op de juiste zender.")
+            Text("Begin met \"Zoek VRT op dit toestel\", kies daarna een link of app en kijk of VRT MAX opent.")
         }
         .alert("Resultaat", isPresented: Binding(get: { probeResult != nil }, set: { if !$0 { probeResult = nil } })) {
             Button("OK") {}
