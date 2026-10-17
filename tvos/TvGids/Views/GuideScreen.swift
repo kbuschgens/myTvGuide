@@ -5,9 +5,6 @@ struct GuideScreen: View {
     @State private var store = GuideStore()
     @State private var focus: FocusTarget?
     @State private var missingApp: AppInfo?
-    @State private var probing: Channel?
-    @State private var probeResult: String?
-    @State private var found = PrivateLauncher.Report()
     @State private var anchor = TimeGrid.floorToSlot(.now)
     @State private var gridID = UUID()
     @State private var isReady = false
@@ -18,13 +15,6 @@ struct GuideScreen: View {
     private let links = AppLinks()
     /// Na zo lang op de achtergrond start de gids opnieuw bij het live-programma.
     private static let reanchorAfter: TimeInterval = 10 * 60
-    /// Testmodus: livestream-pagina's van VRT MAX die als universal link aan de app worden gegeven.
-    private static let livestreamURLs = [
-        "https://www.vrt.be/vrtmax/livestream/video/vrt-1/",
-        "https://www.vrt.be/vrtmax/livestream/video/vrt1/",
-        "https://www.vrt.be/vrtmax/livestream/video/vrt-canvas/",
-        "https://www.vrt.be/vrtmax/livestream/",
-    ].compactMap(URL.init(string:))
 
     var body: some View {
         GeometryReader { geo in
@@ -83,46 +73,6 @@ struct GuideScreen: View {
                 break
             }
         }
-        .confirmationDialog("Test VRT MAX-link", isPresented: Binding(get: { probing != nil }, set: { if !$0 { probing = nil } }),
-                            titleVisibility: .visible) {
-            Button("Open VRT MAX") {
-                probeResult = "openApplicationWithBundleID be.vrt.vrtnu: \(PrivateLauncher.open(bundleID: "be.vrt.vrtnu"))"
-            }
-            Button("Inspecteer be.vrt.vrtnu") {
-                found = PrivateLauncher.inspect(bundleID: "be.vrt.vrtnu")
-                probeResult = found.lines.joined(separator: "\n")
-            }
-            ForEach(Self.livestreamURLs, id: \.absoluteString) { url in
-                Button("Activity: \(url.path)") {
-                    probeResult = PrivateLauncher.openUserActivity(url, bundleID: "be.vrt.vrtnu")
-                }
-            }
-            Button("Zoek VRT op dit toestel") {
-                found = PrivateLauncher.search("vrt")
-                probeResult = found.lines.joined(separator: "\n")
-            }
-            ForEach(found.schemes, id: \.self) { scheme in
-                if let url = URL(string: "\(scheme)://") {
-                    Button("Gevonden: \(scheme)://") { probe(url) }
-                }
-            }
-            ForEach(found.bundleIDs.isEmpty ? ["be.vrt.vrtnu", "be.vrt.vrtmax"] : found.bundleIDs, id: \.self) { id in
-                Button("Open app \(id)") {
-                    probeResult = "openApplicationWithBundleID \(id): \(PrivateLauncher.open(bundleID: id))"
-                }
-            }
-            ForEach(probing.flatMap { links.probeURLs[$0.id] } ?? [], id: \.absoluteString) { url in
-                Button(url.absoluteString) { probe(url) }
-            }
-            Button("Annuleer", role: .cancel) {}
-        } message: {
-            Text("Begin met \"Zoek VRT op dit toestel\", kies daarna een link of app en kijk of VRT MAX opent.")
-        }
-        .alert("Resultaat", isPresented: Binding(get: { probeResult != nil }, set: { if !$0 { probeResult = nil } })) {
-            Button("OK") {}
-        } message: {
-            Text(probeResult ?? "")
-        }
         .alert(item: $missingApp) { app in
             Alert(title: Text("\(app.name) niet gevonden"),
                   message: Text("Installeer \(app.name) om dit programma te bekijken."),
@@ -139,27 +89,20 @@ struct GuideScreen: View {
         return (channel, program)
     }
 
-    private func probe(_ url: URL) {
-        let canOpen = UIApplication.shared.canOpenURL(url)
-        UIApplication.shared.open(url) { success in
-            Task { @MainActor in
-                probeResult = "\(url.absoluteString)\ncanOpenURL: \(canOpen)\nopen: \(success)"
-            }
-        }
-    }
-
     private func open(_ channel: Channel, _ program: Program) {
-        if links.probeURLs[channel.id] != nil {
-            probing = channel
-            return
-        }
         if let url = links.overrideURL(for: channel) {
             UIApplication.shared.open(url) { success in
                 if !success, let app = links.app(for: channel) { Task { @MainActor in missingApp = app } }
             }
             return
         }
-        guard let app = links.app(for: channel), let url = app.launchURL else { return }
+        guard let app = links.app(for: channel) else { return }
+        if let bundleId = app.bundleId {
+            // VRT MAX heeft op tvOS geen URL-scheme en geen universal links: alleen de app openen kan.
+            if !PrivateLauncher.open(bundleID: bundleId) { missingApp = app }
+            return
+        }
+        guard let url = app.launchURL else { return }
         UIApplication.shared.open(url, options: [:]) { success in
             if !success { Task { @MainActor in missingApp = app } }
         }
