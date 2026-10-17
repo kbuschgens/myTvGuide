@@ -18,6 +18,13 @@ struct GuideScreen: View {
     private let links = AppLinks()
     /// Na zo lang op de achtergrond start de gids opnieuw bij het live-programma.
     private static let reanchorAfter: TimeInterval = 10 * 60
+    /// Testmodus: livestream-pagina's van VRT MAX die als universal link aan de app worden gegeven.
+    private static let livestreamURLs = [
+        "https://www.vrt.be/vrtmax/livestream/video/vrt-1/",
+        "https://www.vrt.be/vrtmax/livestream/video/vrt1/",
+        "https://www.vrt.be/vrtmax/livestream/video/vrt-canvas/",
+        "https://www.vrt.be/vrtmax/livestream/",
+    ].compactMap(URL.init(string:))
 
     var body: some View {
         GeometryReader { geo in
@@ -78,6 +85,18 @@ struct GuideScreen: View {
         }
         .confirmationDialog("Test VRT MAX-link", isPresented: Binding(get: { probing != nil }, set: { if !$0 { probing = nil } }),
                             titleVisibility: .visible) {
+            Button("Open VRT MAX") {
+                probeResult = "openApplicationWithBundleID be.vrt.vrtnu: \(PrivateLauncher.open(bundleID: "be.vrt.vrtnu"))"
+            }
+            Button("Inspecteer be.vrt.vrtnu") {
+                found = PrivateLauncher.inspect(bundleID: "be.vrt.vrtnu")
+                probeResult = found.lines.joined(separator: "\n")
+            }
+            ForEach(Self.livestreamURLs, id: \.absoluteString) { url in
+                Button("Activity: \(url.path)") {
+                    probeResult = PrivateLauncher.openUserActivity(url, bundleID: "be.vrt.vrtnu")
+                }
+            }
             Button("Zoek VRT op dit toestel") {
                 found = PrivateLauncher.search("vrt")
                 probeResult = found.lines.joined(separator: "\n")
