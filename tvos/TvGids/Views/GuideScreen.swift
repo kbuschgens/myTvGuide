@@ -5,6 +5,8 @@ struct GuideScreen: View {
     @State private var store = GuideStore()
     @State private var focus: FocusTarget?
     @State private var missingApp: AppInfo?
+    @State private var probing: Channel?
+    @State private var probeResult: String?
     @State private var anchor = TimeGrid.floorToSlot(.now)
     @State private var gridID = UUID()
     @State private var isReady = false
@@ -73,6 +75,20 @@ struct GuideScreen: View {
                 break
             }
         }
+        .confirmationDialog("Test VRT MAX-link", isPresented: Binding(get: { probing != nil }, set: { if !$0 { probing = nil } }),
+                            titleVisibility: .visible) {
+            ForEach(probing.flatMap { links.probeURLs[$0.id] } ?? [], id: \.absoluteString) { url in
+                Button(url.absoluteString) { probe(url) }
+            }
+            Button("Annuleer", role: .cancel) {}
+        } message: {
+            Text("Kies een link en kijk of VRT MAX opent op de juiste zender.")
+        }
+        .alert("Resultaat", isPresented: Binding(get: { probeResult != nil }, set: { if !$0 { probeResult = nil } })) {
+            Button("OK") {}
+        } message: {
+            Text(probeResult ?? "")
+        }
         .alert(item: $missingApp) { app in
             Alert(title: Text("\(app.name) niet gevonden"),
                   message: Text("Installeer \(app.name) om dit programma te bekijken."),
@@ -89,10 +105,23 @@ struct GuideScreen: View {
         return (channel, program)
     }
 
+    private func probe(_ url: URL) {
+        let canOpen = UIApplication.shared.canOpenURL(url)
+        UIApplication.shared.open(url) { success in
+            Task { @MainActor in
+                probeResult = "\(url.absoluteString)\ncanOpenURL: \(canOpen)\nopen: \(success)"
+            }
+        }
+    }
+
     private func open(_ channel: Channel, _ program: Program) {
+        if links.probeURLs[channel.id] != nil {
+            probing = channel
+            return
+        }
         if let url = links.overrideURL(for: channel) {
             UIApplication.shared.open(url) { success in
-                print("opened:", success)
+                if !success, let app = links.app(for: channel) { Task { @MainActor in missingApp = app } }
             }
             return
         }
